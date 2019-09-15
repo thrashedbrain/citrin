@@ -62,13 +62,12 @@ def setlead():
             print('fail')
             mongo.db.phones.insert_one({'phone': phone, 'date': date})
             req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
-                "form": {
-                    'LOGIN': "citrin@citrin.su",
-                    'PASSWORD': "PlayBoy69",
-                    'TITLE': "Авито",
-                    'PHONE_MOBILE': phone
-                }
+                'LOGIN': "citrin@citrin.su",
+                'PASSWORD': "PlayBoy69",
+                'TITLE': "Авито",
+                'PHONE_MOBILE': phone
             })
+            print(req.text)
             return jsonify('asd')
         else:
             delta = date - dbdata['date']
