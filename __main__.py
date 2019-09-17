@@ -27,7 +27,7 @@ def setworkers():
     return jsonify("asd")
 
 
-@app.route('/blacklist/', methods=['POST'])
+@app.route('/blacklist/', methods=['POST', 'GET', 'DELETE'])
 def blacklist():
     if request.method == 'POST':
         data = {
@@ -40,7 +40,7 @@ def blacklist():
         blacklist = mongo.db.blacklist.find({})
         datastr = []
         for document in blacklist:
-            datastr.append({'phone': document['phone']})
+            datastr.append({'phone': document['name']})
         return jsonify(datastr)
 
     elif request.method == 'DELETE':
