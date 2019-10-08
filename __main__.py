@@ -48,48 +48,49 @@ def blacklist():
         return jsonify("asd")
 
 
-@app.route('/setlead', methods=['POST'])
+@app.route('/setlead/', methods=['POST'])
 def setlead():
-    phone = request.form.get('phone')
-    date = datetime.datetime.utcnow()
-    blacklist = mongo.db.blacklist.find_one({'name': phone})
+    if request.method == 'POST':
+        phone = request.form.get('phone')
+        date = datetime.datetime.utcnow()
+        blacklist = mongo.db.blacklist.find_one({'name': phone})
 
-    if blacklist is not None and blacklist['name'] == phone:
-        return jsonify("blacklist")
-    else:
-        dbdata = mongo.db.phones.find_one({'phone': phone})
-        if dbdata is None:
-            print('fail')
-            mongo.db.phones.insert_one({'phone': phone, 'date': date})
-            req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
-                'LOGIN': "citrin@citrin.su",
-                'PASSWORD': "PlayBoy69",
-                'TITLE': "Авито",
-                'PHONE_MOBILE': phone
-            })
-            print(req.text)
-            return jsonify('asd')
+        if blacklist is not None and blacklist['name'] == phone:
+            return jsonify("blacklist")
         else:
-            delta = date - dbdata['date']
-            if delta.total_seconds() // 3600 > 24:
-                mongo.db.phones.update_one({
-                    '_id': dbdata['_id']
-                }, {
-                    '$set': {
-                        'date': date
-                    }
-                })
+            dbdata = mongo.db.phones.find_one({'phone': phone})
+            if dbdata is None:
+                print('fail')
+                mongo.db.phones.insert_one({'phone': phone, 'date': date})
                 req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
+                    'LOGIN': "citrin@citrin.su",
+                    'PASSWORD': "PlayBoy69",
+                    'TITLE': "Авито",
+                    'PHONE_MOBILE': phone
+                })
+                print(req.text)
+                return jsonify('asd')
+            else:
+                delta = date - dbdata['date']
+                if delta.total_seconds() // 3600 > 24:
+                    mongo.db.phones.update_one({
+                        '_id': dbdata['_id']
+                    }, {
+                        '$set': {
+                            'date': date
+                        }
+                    })
+                    req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
                         'LOGIN': "citrin@citrin.su",
                         'PASSWORD': "PlayBoy69",
                         'TITLE': "Авито",
                         'PHONE_MOBILE': phone
-                })
-                print(req.text)
-                return jsonify("asd")
+                    })
+                    print(req.text)
+                    return jsonify("asd")
 
-            else:
-                return jsonify('err')
+                else:
+                    return jsonify('err')
 
 
 if __name__ == "__main__":
