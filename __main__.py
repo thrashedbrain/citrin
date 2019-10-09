@@ -55,8 +55,11 @@ def setlead():
         date = datetime.datetime.utcnow()
         blacklist = mongo.db.blacklist.find_one({'name': phone})
 
+        if phone is None or phone == "":
+            return jsonify({"Status": "Empty"})
+
         if blacklist is not None and blacklist['name'] == phone:
-            return jsonify("blacklist")
+            return jsonify({"Status": "blacklist"})
         else:
             dbdata = mongo.db.phones.find_one({'phone': phone})
             if dbdata is None:
@@ -69,7 +72,7 @@ def setlead():
                     'PHONE_MOBILE': phone
                 })
                 print(req.text)
-                return jsonify('asd')
+                return jsonify({"Status": "Ok"})
             else:
                 delta = date - dbdata['date']
                 if delta.total_seconds() // 3600 > 24:
@@ -87,10 +90,10 @@ def setlead():
                         'PHONE_MOBILE': phone
                     })
                     print(req.text)
-                    return jsonify("asd")
+                    return jsonify({"Status": "Ok"})
 
                 else:
-                    return jsonify('err')
+                    return jsonify({"Status": "Err"})
 
 
 if __name__ == "__main__":
