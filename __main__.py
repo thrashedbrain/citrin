@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/citrin_caller"
 mongo = PyMongo(app)
 
-currentMail = ""
-currentPassword = ""
+currentMail = "Citrin@citrin.su"
+currentPassword = "PlayBoy69"
 
 
 @app.route('/workers/')
@@ -21,7 +21,7 @@ def workers():
                         'username': document['username'],
                         'password': document['password'],
                         'id': str(document['_id'])})
-
+    print(datastr)
     return jsonify(datastr)
 
 
@@ -41,6 +41,7 @@ def addworkers():
         "password": request.form.get('password')
     }
     collection = mongo.db.workers.insert_one(data)
+    print("/setworkers Status: added")
     return jsonify({"Status": "Added"})
 
 
@@ -70,7 +71,7 @@ def blacklist():
             "name": request.form.get('phone')
         }
         collection = mongo.db.blacklist.insert_one(data)
-        return jsonify("asd")
+        return jsonify({"Status": "Ok"})
 
     elif request.method == 'GET':
         blacklist = mongo.db.blacklist.find({})
@@ -81,7 +82,7 @@ def blacklist():
 
     elif request.method == 'DELETE':
         blacklist = mongo.db.blacklist.remove({'phone': request.form.get('phone')})
-        return jsonify("asd")
+        return jsonify({"Status": "Deleted"})
 
 
 @app.route('/setlead/', methods=['POST'])
@@ -102,8 +103,8 @@ def setlead():
                 print('fail')
                 mongo.db.phones.insert_one({'phone': phone, 'date': date})
                 req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
-                    'LOGIN': "citrin@citrin.su",
-                    'PASSWORD': "PlayBoy69",
+                    'LOGIN': currentMail,
+                    'PASSWORD': currentPassword,
                     'TITLE': "Авито",
                     'PHONE_MOBILE': phone
                 })
