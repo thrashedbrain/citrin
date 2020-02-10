@@ -12,6 +12,12 @@ currentMail = "Citrin@citrin.su"
 currentPassword = "PlayBoy69"
 
 
+@app.route('/hooks/', methods=['POST'])
+def hooks():
+    print(request.form)
+    return jsonify({'Status': 'Ok'})
+
+
 @app.route('/workers/')
 def workers():
     workers = mongo.db.workers.find({})
@@ -35,11 +41,18 @@ def addworkers():
             or request.form.get("password") is None:
         return jsonify({"Status": "Err"})
 
+    workers = mongo.db.workers.find({})
+    datastr = []
+    for document in workers:
+        if document['username'] == request.form.get('username'):
+            return jsonify({"Status": "Exist"})
+
     data = {
         "name": request.form.get('name'),
         "username": request.form.get('username'),
         "password": request.form.get('password')
     }
+
     collection = mongo.db.workers.insert_one(data)
     print("/setworkers Status: added")
     return jsonify({"Status": "Added"})
