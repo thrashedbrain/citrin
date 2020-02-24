@@ -31,7 +31,7 @@ def workers():
     return jsonify(datastr)
 
 
-@app.route('/setworkers/', methods=['POST'])
+@app.route('/addworkers/', methods=['POST'])
 def addworkers():
     if request.form.get("name") == "" \
             or request.form.get("name") is None \
@@ -60,21 +60,25 @@ def addworkers():
 
 @app.route('/setworker/', methods=['POST'])
 def setworker():
-    id = request.form.get("id")
-    print(id)
-    collection = mongo.db.workers.find_one({'_id': ObjectId(id)})
+    if request.method == 'POST':
+        id = request.form.get("id")
+        print(id)
+        collection = mongo.db.workers.find_one({'_id': ObjectId(id)})
 
-    if collection['username'] is not None \
-            and collection['username'] != "" \
-            and collection['password'] is not None \
-            and collection['username'] != "":
-        currentMail = collection['username']
-        currentPassword = collection['password']
-        print(currentMail)
-        return jsonify({"Status": "Ok"})
+        if collection['username'] is not None \
+                and collection['username'] != "" \
+                and collection['password'] is not None \
+                and collection['username'] != "":
+            currentMail = collection['username']
+            currentPassword = collection['password']
+            print(currentMail)
+            return jsonify({"Status": "Ok"})
+
+        else:
+            return jsonify({"Status": "Err"})
 
     else:
-        return jsonify({"Status": "Err"})
+        return jsonify({"Status": "Method Not Supported"})
 
 
 @app.route('/blacklist/', methods=['POST', 'GET', 'DELETE'])
@@ -96,6 +100,9 @@ def blacklist():
     elif request.method == 'DELETE':
         blacklist = mongo.db.blacklist.remove({'phone': request.form.get('phone')})
         return jsonify({"Status": "Deleted"})
+
+    else:
+        return jsonify({"Status": "Method Not Supported"})
 
 
 @app.route('/setlead/', methods=['POST'])
@@ -144,6 +151,10 @@ def setlead():
 
                 else:
                     return jsonify({"Status": "Err"})
+
+    else:
+
+        return jsonify({"Status": "Method Not Supported"})
 
 
 if __name__ == "__main__":
