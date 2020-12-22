@@ -5,11 +5,11 @@ from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/citrin_caller"
+app.config["MONGO_URI"] = "mongodb://mongoURI:27017/citrin_caller"
 mongo = PyMongo(app)
 
-currentMail = "Citrin@citrin.su"
-currentPassword = "PlayBoy69"
+currentMail = "email@email.email"
+currentPassword = "pass"
 
 
 @app.route('/hooks/', methods=['POST'])
@@ -122,7 +122,7 @@ def setlead():
             if dbdata is None:
                 print('fail')
                 mongo.db.phones.insert_one({'phone': phone, 'date': date})
-                req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
+                req = requests.post('https://****.bitrix24.ru/crm/configs/import/lead.php', data={
                     'LOGIN': currentMail,
                     'PASSWORD': currentPassword,
                     'TITLE': "Авито",
@@ -140,7 +140,7 @@ def setlead():
                             'date': date
                         }
                     })
-                    req = requests.post('https://citrin.bitrix24.ru/crm/configs/import/lead.php', data={
+                    req = requests.post('https://****.bitrix24.ru/crm/configs/import/lead.php', data={
                         'LOGIN': currentMail,
                         'PASSWORD': currentPassword,
                         'TITLE': "Авито",
